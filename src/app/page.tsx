@@ -5,8 +5,8 @@ export default function Home() {
     <main className="min-h-screen p-8">
       <h1 className="text-3xl font-bold">Входная страница</h1>
 
-      <Link href="/login">Войти</Link>
-      <Link href="/register">Регистрация</Link>
+      <Link href="/signin">Войти</Link>
+      <Link href="/signup">Регистрация</Link>
     </main>
   );
 }
