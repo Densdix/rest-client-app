@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "format": "prettier --write src/",
+    "format": "prettier --write .",
     "lint": "eslint . --ext ts,tsx",
     "lint:watch": "next lint",
     "lint:fix": "next lint --fix",
