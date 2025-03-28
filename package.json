@@ -10,7 +10,6 @@
     "lint": "eslint . --ext ts,tsx",
     "lint:watch": "next lint",
     "lint:fix": "next lint --fix",
-    "pre-commit": "npm run lint",
     "prepare": "husky"
   },
   "dependencies": {
