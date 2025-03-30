@@ -2,9 +2,9 @@ import { useAppSelector } from '@/hooks/redux.hook';
 
 interface RootState {
   auth: {
-    email: string | null;
-    token: string | null;
-    id: string | null;
+    email: string | undefined;
+    token: string | undefined;
+    id: string | undefined;
   };
 }
 
