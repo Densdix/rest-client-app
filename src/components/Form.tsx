@@ -18,7 +18,6 @@ export const Form: React.FC<Props> = ({ title, handleClick }) => {
       <button
         onClick={() => {
           handleClick(email, password);
-          console.log('вызвана функция handleClick в форме');
         }}
       >
         {title}
