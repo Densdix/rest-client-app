@@ -1,5 +1,5 @@
 import React from 'react';
 
 export const Footer = () => {
-  return <div className="p-4 border border-green-500">Footer</div>;
+  return <div className="bg-white dark:bg-gray-800 shadow p-4">Footer</div>;
 };

@@ -1,5 +1,5 @@
 import React from 'react';
 
 export const Header = () => {
-  return <div className=" p-4 border border-purple-500">Header</div>;
+  return <div className="bg-white dark:bg-gray-800 shadow p-4">Header</div>;
 };
