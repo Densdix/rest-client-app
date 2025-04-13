@@ -2,6 +2,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Supabase Integration
+
+https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs?queryGroups=database-method&database-method=dashboard&queryGroups=language&language=ts#get-the-api-keys
+
 First, run the development server:
 
 ```bash
