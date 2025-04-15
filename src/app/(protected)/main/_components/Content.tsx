@@ -9,10 +9,10 @@ export const Content: React.FC<{ user: User }> = ({ user }) => {
   const [method, setMethod] = useState('GET');
   const [url, setUrl] = useState('');
   const [body, setBody] = useState('');
-  const [response, setResponse] = useState<ResponseData | null>(null);
-  const [status, setStatus] = useState('');
-  const [size, setSize] = useState('');
-  const [time, setTime] = useState('');
+  // const [response] = useState<unknown | null>(null);
+  const [status] = useState('');
+  const [size] = useState('');
+  const [time] = useState('');
 
   return (
     <div>
@@ -114,7 +114,7 @@ export const Content: React.FC<{ user: User }> = ({ user }) => {
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700 p-4 h-96 overflow-y-auto">
-                {response && <pre className="text-sm">{JSON.stringify(response, null, 2)}</pre>}
+                {/* {response && <pre className="text-sm">{JSON.stringify(response, null, 2)}</pre>} */}
               </div>
             </div>
           </div>
