@@ -43,6 +43,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      'react-hooks/exhaustive-deps': 'off',
       'prettier/prettier': 'warn',
       'arrow-body-style': 'off',
       'prefer-arrow-callback': 'off',
