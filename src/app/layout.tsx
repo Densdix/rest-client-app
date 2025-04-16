@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <Providers>
           <Header />
-          <main className="flex-grow bg-gray-100 dark:bg-gray-900 max-w-[1280px] mx-auto">{children}</main>
+          <main className="flex-grow bg-gray-100 dark:bg-gray-900 max-w-[1280px] w-full mx-auto">{children}</main>
           <Footer />
         </Providers>
       </body>

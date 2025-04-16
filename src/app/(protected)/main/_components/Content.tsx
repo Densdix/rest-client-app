@@ -1,11 +1,11 @@
 'use client';
 
-import { User } from '@supabase/supabase-js';
+// import { User } from '@supabase/supabase-js';
 // import { User } from '@/types/User';
 import React from 'react';
 import { useState } from 'react';
 
-export const Content: React.FC<{ user: User }> = ({ user }) => {
+export const Content: React.FC = () => {
   const [method, setMethod] = useState('GET');
   const [url, setUrl] = useState('');
   const [body, setBody] = useState('');
@@ -17,7 +17,7 @@ export const Content: React.FC<{ user: User }> = ({ user }) => {
   return (
     <div>
       <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
+        {/* <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">REST/GraphQL API</h1>
           <div className="flex items-center space-x-4">
             <span className="font-medium">{user?.email}</span>
@@ -27,7 +27,7 @@ export const Content: React.FC<{ user: User }> = ({ user }) => {
               </button>
             </form>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-1 p-4">
           {/* Левая панель - параметры запроса */}

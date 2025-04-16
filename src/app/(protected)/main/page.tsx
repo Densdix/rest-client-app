@@ -105,5 +105,5 @@ export default async function MainPage() {
     redirect('/signin');
   }
 
-  return <Content user={user} />;
+  return <Content />;
 }

@@ -11,18 +11,21 @@ export const Header = async () => {
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow">
-      <div className="p-4 w-full max-w-[1280px] mx-auto flex justify-between  align-middle items-center">
+      <div className="py-4 px-8 w-full max-w-[1280px] mx-auto flex justify-between  align-middle items-center">
         <div>
-          <Link href="/" className=" w-20 h-20 block bg-blue-600 hover:bg-blue-700 rounded-full">
+          <Link href="/" className=" w-20 h-20 block bg-gray-400 hover:bg-gray-500 rounded-full">
             {/* <img src="/logo.png" alt="app logo" className="w-22 h-22" /> */}
           </Link>
         </div>
-        <div>Lang</div>
+        <div className="text-gray-400">Lang</div>
         {user ? (
-          <div>
-            {user.email}
+          <div className="flex items-center space-x-4">
+            <span className="text-gray-400">{user.email}</span>
             <form action="/api/signout" method="post">
-              <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" type="submit">
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4"
+                type="submit"
+              >
                 Выйти
               </button>
             </form>
