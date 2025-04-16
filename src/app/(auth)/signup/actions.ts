@@ -20,7 +20,10 @@ export async function signup(formData: FormData) {
   console.log(error);
 
   if (error) {
-    redirect('/error');
+    // redirect('/error');
+    return {
+      error: error.message,
+    };
   }
 
   revalidatePath('/', 'layout');
