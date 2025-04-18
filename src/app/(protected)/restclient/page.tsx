@@ -25,7 +25,7 @@ import { redirect } from 'next/navigation';
 //   };
 // };
 
-export default async function MainPage() {
+export default async function RestClientPage() {
   const supabase = await createClient();
 
   const {
