@@ -32,10 +32,10 @@ export const Header = async () => {
           </div>
         ) : (
           <>
-            <Link href="/signin" className=" text-blue-600 hover:text-blue-700">
+            <Link href="/signin" className="  text-gray-400 hover:text-gray-500">
               Войти
             </Link>
-            <Link href="/signup" className=" text-blue-600 hover:text-blue-700">
+            <Link href="/signup" className="  text-gray-400 hover:text-gray-500">
               Регистрация
             </Link>
           </>

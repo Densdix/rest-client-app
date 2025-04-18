@@ -1,29 +1,7 @@
-// 'use client';
-
+import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
-// import { useRouter } from 'next/navigation';
-import { Content } from './_components/Content';
+// import { Content } from './_components/Content';
 import { redirect } from 'next/navigation';
-
-// type ResponseData = {
-//   message: string;
-//   about: string;
-//   createdBy: string;
-//   launched: number;
-//   features: {
-//     git: string;
-//     themes: string;
-//     data: string;
-//     testing: string;
-//     local: string;
-//   };
-//   supports?: {
-//     graphql?: boolean;
-//     codeSnippet?: boolean;
-//     requestChaining?: boolean;
-//     scripting?: boolean;
-//   };
-// };
 
 export default async function MainPage() {
   const supabase = await createClient();
@@ -34,76 +12,36 @@ export default async function MainPage() {
 
   console.log('user111: ', user);
 
-  // const router = useRouter();
-
-  // async function checkAuth() {
-  //   try {
-  //     const res = await fetch('/api/user');
-  //     if (!res.ok) {
-  //       router.push('/signin');
-  //       return;
-  //     }
-
-  //     const userData = await res.json();
-  //     setUser(userData.user);
-  //   } catch (error) {
-  //     console.error('Ошибка проверки аутентификации:', error);
-  //     router.push('/signin');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   checkAuth();
-  // }, []);
-
-  // const handleSend = async () => {
-  //   try {
-  //     const startTime = Date.now();
-
-  //     // Имитация запроса или реальный запрос
-  //     // В реальном приложении здесь был бы fetch к указанному URL
-  //     setStatus('200 OK');
-
-  //     // Имитация ответа
-  //     const mockResponse = {
-  //       message: 'Welcome to REST Client',
-  //       about: 'Lightweight Rest API Client for Next.js',
-  //       createdBy: 'Your Name',
-  //       launched: 2023,
-  //       features: {
-  //         git: 'Save data to Git Workspace',
-  //         themes: 'Supports Dark/Light Themes',
-  //         data: 'Collections & Environment Variables',
-  //         testing: 'Scriptless Testing',
-  //         local: 'Local Storage & Works Offline',
-  //       },
-  //       supports: {
-  //         graphql: true,
-  //         codeSnippet: true,
-  //         requestChaining: true,
-  //         scripting: true,
-  //       },
-  //     };
-
-  // Рассчитываем размер и время
-  //     const responseText = JSON.stringify(mockResponse);
-  //     setSize(`${responseText.length} Bytes`);
-  //     setTime(`${Date.now() - startTime} ms`);
-  //     setResponse(mockResponse);
-  //   } catch (error) {
-  //     console.error('Error sending request:', error);
-  //     setStatus('Error');
-  //     setResponse(null);
-  //   }
-  // };
   if (!user) {
     console.log('no user');
     console.log({ user });
-    // revalidatePath('/', 'layout');
     redirect('/signin');
   }
 
-  return <Content />;
+  return (
+    <div className="w-full h-full p-8 flex flex-col justify-center align-middle items-center">
+      <div className="flex items-center space-x-4 my-10">
+        <span className="text-gray-400">{user.email}</span>
+        <form action="/api/signout" method="post">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4"
+            type="submit"
+          >
+            Выйти
+          </button>
+        </form>
+      </div>
+      <div className="flex items-center space-x-4">
+        <Link href="/history" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          История
+        </Link>
+        <Link href="/restclient" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          Rest client
+        </Link>
+        <Link href="/variables" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          Переменные
+        </Link>
+      </div>
+    </div>
+  );
 }
