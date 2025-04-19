@@ -6,7 +6,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 export const Content: React.FC = () => {
   const lastInput = useRef<EventTarget & HTMLInputElement>(null);
 
-  const { register, handleSubmit, control, setValue, getValues, watch } = useForm<{
+  const { register, handleSubmit, control, setValue, getValues } = useForm<{
     url: string;
     method: string;
     body: string;
@@ -27,20 +27,12 @@ export const Content: React.FC = () => {
     lastInput.current?.focus();
   }, [fields]);
 
-  useEffect(() => {
-    console.log('сработал watch');
-    createUrl();
-  }, [watch('url'), watch('paramNames')]);
-
   function createUrl() {
-    console.log('сработал createUrl');
     const currentUrl = getValues('url').includes('?') ? getValues('url').split('?')[0] : getValues('url');
 
     const params = getValues('paramNames')
-      .filter((field) => field.value)
+      .filter((field) => field.value && field.name)
       .map((field) => {
-        console.log('field: ', field);
-        console.log('field.name: ', field.name, 'field.value: ', field.value);
         return `${field.name}=${field.value}`;
       })
       .join('&');
@@ -52,7 +44,16 @@ export const Content: React.FC = () => {
   }
 
   function handleAppend(index: number, e: React.ChangeEvent<HTMLInputElement>) {
-    console.log('произошло событие onChange и мы вызвалась функция handleAppend');
+    const fieldName = e.target.name.split('.').pop();
+    const value = e.target.value;
+
+    if (fieldName === 'name') {
+      setValue(`paramNames.${index}.name`, value);
+    } else if (fieldName === 'value') {
+      setValue(`paramNames.${index}.value`, value);
+    }
+
+    createUrl();
 
     if (fields.length - 1 === index) {
       append({ name: '', value: '' });
