@@ -1,17 +1,20 @@
 'use client';
 
+import { recordRequest } from '@/utils/localstorage/recordRequest';
 import React, { useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
+
+interface Request {
+  url: string;
+  method: string;
+  body: string;
+  paramNames: { name: string; value: string }[];
+}
 
 export const Content: React.FC = () => {
   const lastInput = useRef<EventTarget & HTMLInputElement>(null);
 
-  const { register, handleSubmit, control, setValue, getValues } = useForm<{
-    url: string;
-    method: string;
-    body: string;
-    paramNames: { name: string; value: string }[];
-  }>({
+  const { register, handleSubmit, control, setValue, getValues } = useForm<Request>({
     defaultValues: {
       url: '',
       paramNames: [{ name: '', value: '' }],
@@ -61,10 +64,18 @@ export const Content: React.FC = () => {
     }
   }
 
+  const handleSubmitRequest = async (data: Request) => {
+    console.log(data);
+
+    // await sendRequest(data);
+
+    recordRequest(data.url);
+  };
+
   return (
     <div>
       <div className="p-4">
-        <form onSubmit={handleSubmit((data) => console.log(data))}>
+        <form onSubmit={handleSubmit(handleSubmitRequest)}>
           <div className="flex flex-1 p-4">
             <div className="w-1/2 pr-2">
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">

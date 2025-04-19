@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import ContentHistory from './_components/Content';
 
 export default async function HistoryPage() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function HistoryPage() {
 
   return (
     <div className="w-full h-full p-8 flex flex-col justify-center align-middle items-center">
-      <div className="flex items-center space-x-4 my-10">History</div>
+      <ContentHistory />
     </div>
   );
 }
