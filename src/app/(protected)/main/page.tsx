@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
+// import { Content } from './_components/Content';
 import { redirect } from 'next/navigation';
 
 export default async function MainPage() {
@@ -8,19 +10,38 @@ export default async function MainPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log('user111: ', user);
+
   if (!user) {
+    console.log('no user');
+    console.log({ user });
     redirect('/signin');
   }
 
   return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-2xl font-bold">GraphQL API</h1>
-      <h1 className="text-2xl font-bold">{user?.email}</h1>
-      <form action="/api/signout" method="post">
-        <button className="button block" type="submit" style={{ cursor: 'pointer', backgroundColor: 'red' }}>
-          Sign out
-        </button>
-      </form>
-    </main>
+    <div className="w-full h-full p-8 flex flex-col justify-center align-middle items-center">
+      <div className="flex items-center space-x-4 my-10">
+        <span className="text-gray-400">{user.email}</span>
+        <form action="/api/signout" method="post">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4"
+            type="submit"
+          >
+            Выйти
+          </button>
+        </form>
+      </div>
+      <div className="flex items-center space-x-4">
+        <Link href="/history" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          История
+        </Link>
+        <Link href="/restclient" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          Rest client
+        </Link>
+        <Link href="/variables" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+          Переменные
+        </Link>
+      </div>
+    </div>
   );
 }
