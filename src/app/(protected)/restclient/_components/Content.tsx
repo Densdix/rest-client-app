@@ -31,31 +31,23 @@ export const Content: React.FC = () => {
   }, [fields]);
 
   function createUrl() {
-    const currentUrl = getValues('url').includes('?') ? getValues('url').split('?')[0] : getValues('url');
+    const url = getValues('url');
+    const currentUrl = url.includes('?') ? url.split('?')[0] : url;
 
     const params = getValues('paramNames')
-      .filter((field) => field.value && field.name)
+      .filter((field) => field.name && field.value)
       .map((field) => {
         return `${field.name}=${field.value}`;
       })
       .join('&');
 
     const newUrl = params ? `${currentUrl}?${params}` : currentUrl;
-    if (newUrl !== getValues('url')) {
+    if (newUrl !== url) {
       setValue('url', newUrl);
     }
   }
 
   function handleAppend(index: number, e: React.ChangeEvent<HTMLInputElement>) {
-    const fieldName = e.target.name.split('.').pop();
-    const value = e.target.value;
-
-    if (fieldName === 'name') {
-      setValue(`paramNames.${index}.name`, value);
-    } else if (fieldName === 'value') {
-      setValue(`paramNames.${index}.value`, value);
-    }
-
     createUrl();
 
     if (fields.length - 1 === index) {
@@ -122,12 +114,18 @@ export const Content: React.FC = () => {
                         <input
                           className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
                           {...register(`paramNames.${index}.name`)}
-                          onChange={(e) => handleAppend(index, e)}
+                          onChange={(e) => {
+                            setValue(`paramNames.${index}.name`, e.target.value);
+                            handleAppend(index, e);
+                          }}
                         />
                         <input
                           className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
                           {...register(`paramNames.${index}.value`)}
-                          onChange={(e) => handleAppend(index, e)}
+                          onChange={(e) => {
+                            setValue(`paramNames.${index}.value`, e.target.value);
+                            handleAppend(index, e);
+                          }}
                         />
                         <button
                           onClick={(e) => {
