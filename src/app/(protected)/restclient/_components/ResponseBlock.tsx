@@ -1,3 +1,5 @@
+import { getStatusCodeColor } from '@/utils/getStatusCodeColor';
+
 interface Props {
   responseData: string | null;
   error: string | null;
@@ -11,7 +13,7 @@ export const ResponseBlock: React.FC<Props> = ({ responseData, error, responseSt
         <div className="border-b dark:border-gray-700 mb-4">
           <div className="flex space-x-4 mb-2 justify-between">
             <div className="px-3 font-medium">Response</div>
-            <div className="text-green-500 font-medium">Status: {responseStatus}</div>
+            <div className={`${getStatusCodeColor(responseStatus || 0)}`}>Status: {responseStatus}</div>
           </div>
         </div>
 

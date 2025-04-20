@@ -1,4 +1,4 @@
-import React, { MutableRefObject } from 'react';
+import React from 'react';
 import { UseFormRegister, Control, UseFormSetValue, FieldArrayWithId } from 'react-hook-form';
 import { ContentRequest } from './Content';
 
@@ -9,7 +9,6 @@ interface Props {
   fields: FieldArrayWithId<ContentRequest, 'headers', 'id'>[];
   append: (value: { name: string; value: string; isActive: boolean }) => void;
   remove: (index?: number | number[]) => void;
-  lastInputHeader: MutableRefObject<(EventTarget & HTMLInputElement) | null>;
   handleAppendHeader: (index: number, e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

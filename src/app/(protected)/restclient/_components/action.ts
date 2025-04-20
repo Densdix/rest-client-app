@@ -17,9 +17,6 @@ export async function sendRequest(data: ContentRequest) {
       ? Object.fromEntries(data.headers.filter((h) => h.isActive && h.name).map((h) => [h.name, h.value]))
       : {};
 
-    console.log('Server received request with URL:', url);
-    console.log('Request headers:', headers);
-
     const response = await fetch(url, {
       method: data.method || 'GET',
       headers,
@@ -33,7 +30,6 @@ export async function sendRequest(data: ContentRequest) {
       data: responseData,
     };
   } catch (error) {
-    console.error('Error sending request:', error);
     return {
       error: error instanceof Error ? error.message : 'Failed to send request',
     };

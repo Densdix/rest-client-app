@@ -8,13 +8,11 @@ import { createClient } from '@/utils/supabase/server';
 //fix with try catch for No HTTP methods exported for development
 export async function GET(request: NextRequest) {
   try {
-    console.log('API route /api/confirm called');
     const { searchParams } = new URL(request.url);
     const token_hash = searchParams.get('token_hash');
     const type = searchParams.get('type') as EmailOtpType | null;
     const next = '/main';
 
-    console.log('Parameters:', { token_hash, type });
     const redirectTo = request.nextUrl.clone();
     redirectTo.pathname = next;
     redirectTo.searchParams.delete('token_hash');
@@ -31,13 +29,11 @@ export async function GET(request: NextRequest) {
         redirectTo.searchParams.delete('next');
         return NextResponse.redirect(redirectTo);
       }
-      console.log('Verification result:', { error });
     }
 
     redirectTo.pathname = '/error';
     return NextResponse.redirect(redirectTo);
-  } catch (error) {
-    console.error('Error in confirm route:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

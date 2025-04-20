@@ -70,31 +70,16 @@ export const replaceVariables = (text: string): string => {
     return text;
   }
 
-  console.log('Replacing variables in:', text);
-  console.log('Available variables:', variables);
-
   let result = text;
   const variablePattern = /\{\{([^}]+)\}\}/g;
-
-  const matches = [...text.matchAll(variablePattern)];
-  console.log(
-    'Variable patterns found:',
-    matches.map((m) => m[0])
-  );
 
   result = result.replace(variablePattern, (match, variableName) => {
     const trimmedName = variableName.trim();
     const variable = variables.find((v) => v.name === trimmedName);
 
-    console.log(
-      `Replacing ${match} (${trimmedName}):`,
-      variable ? `found variable with value ${variable.value}` : 'variable not found, keeping unchanged'
-    );
-
     return variable ? variable.value : match;
   });
 
-  console.log('Replacement result:', result);
   return result;
 };
 

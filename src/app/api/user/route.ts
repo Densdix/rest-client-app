@@ -28,8 +28,7 @@ export async function GET() {
         createdAt: user.created_at,
       },
     });
-  } catch (error) {
-    console.error('Ошибка получения данных пользователя:', error);
+  } catch {
     return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 });
   }
 }

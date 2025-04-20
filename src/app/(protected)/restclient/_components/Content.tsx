@@ -33,10 +33,9 @@ export const Content: React.FC = () => {
     setIsMounted(true);
     const loadedVariables = getVariablesFromStorage();
     setVariables(loadedVariables);
-    console.log('Variables loaded in Content component:', loadedVariables);
   }, []);
 
-  const { register, handleSubmit, control, setValue, getValues, watch } = useForm<ContentRequest>({
+  const { register, handleSubmit, control, setValue, getValues } = useForm<ContentRequest>({
     defaultValues: {
       url: '',
       paramNames: [{ name: '', value: '', isActive: true }],
@@ -71,7 +70,7 @@ export const Content: React.FC = () => {
     const currentUrl = url.includes('?') ? url.split('?')[0] : url;
 
     const params = getValues('paramNames')
-      .filter((field) => field.isActive)
+      .filter((field) => field.isActive && field.name)
       .map((field) => {
         return `${field.name}=${field.value}`;
       })
@@ -99,14 +98,6 @@ export const Content: React.FC = () => {
     }
   }
 
-  const currentUrl = watch('url');
-  useEffect(() => {
-    if (currentUrl && variables.length > 0 && isMounted) {
-      console.log('Current URL:', currentUrl);
-      console.log('URL with replaced variables:', replaceVariables(currentUrl));
-    }
-  }, [currentUrl, variables, isMounted]);
-
   const replaceVariablesInContentRequest = (data: ContentRequest): ContentRequest => {
     return {
       ...data,
@@ -127,14 +118,7 @@ export const Content: React.FC = () => {
 
   const handleSubmitRequest = async (data: ContentRequest) => {
     try {
-      console.log('Form data before processing:', data);
-      console.log('Available variables:', getVariablesFromStorage());
-
       const processedData = replaceVariablesInContentRequest(data);
-
-      console.log('Processed request data with variables:', processedData);
-      console.log('Original URL:', data.url);
-      console.log('Processed URL:', processedData.url);
 
       const res = await sendRequest(processedData);
 
@@ -143,8 +127,7 @@ export const Content: React.FC = () => {
       setError(res.error || null);
 
       recordRequest(processedData.url);
-    } catch (err) {
-      console.error('Error processing request with variables:', err);
+    } catch {
       setError('Ошибка при обработке запроса с переменными');
     }
   };
@@ -164,7 +147,6 @@ export const Content: React.FC = () => {
               fields={fields}
               append={append}
               remove={remove}
-              lastInput={lastInput}
               handleAppend={handleAppend}
               createUrl={createUrl}
             />
@@ -176,7 +158,6 @@ export const Content: React.FC = () => {
               fields={headerFields}
               append={appendHeader}
               remove={removeHeader}
-              lastInputHeader={lastInputHeader}
               handleAppendHeader={handleAppendHeader}
             />
 

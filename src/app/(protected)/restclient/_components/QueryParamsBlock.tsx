@@ -1,4 +1,4 @@
-import React, { MutableRefObject } from 'react';
+import React from 'react';
 import { UseFormRegister, Control, UseFormSetValue, UseFormGetValues, FieldArrayWithId } from 'react-hook-form';
 import { ContentRequest } from './Content';
 
@@ -10,7 +10,6 @@ interface Props {
   fields: FieldArrayWithId<ContentRequest, 'paramNames', 'id'>[];
   append: (value: { name: string; value: string; isActive: boolean }) => void;
   remove: (index?: number | number[]) => void;
-  lastInput: MutableRefObject<(EventTarget & HTMLInputElement) | null>;
   handleAppend: (index: number, e: React.ChangeEvent<HTMLInputElement>) => void;
   createUrl: () => void;
 }
