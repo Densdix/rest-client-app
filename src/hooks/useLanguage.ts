@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Language, defaultLanguage } from '../i18n/config';
 
-const LANGUAGE_CHANGE_EVENT = 'languageChange';
+const languageEventService = {
+  listeners: new Set<(lang: Language) => void>(),
 
-declare global {
-  interface WindowEventMap {
-    [LANGUAGE_CHANGE_EVENT]: CustomEvent<Language>;
-  }
-}
+  subscribe(listener: (lang: Language) => void) {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  },
+
+  emit(language: Language) {
+    this.listeners.forEach((listener) => listener(language));
+  },
+};
 
 export const useLanguage = () => {
   const [language, setLanguage] = useState<Language>(() => {
@@ -18,19 +25,19 @@ export const useLanguage = () => {
   });
 
   useEffect(() => {
-    const handleLanguageChange = (e: CustomEvent<Language>) => {
-      setLanguage(e.detail);
+    const handleLanguageChange = (newLanguage: Language) => {
+      setLanguage(newLanguage);
     };
 
-    window.addEventListener(LANGUAGE_CHANGE_EVENT, handleLanguageChange);
-    return () => window.removeEventListener(LANGUAGE_CHANGE_EVENT, handleLanguageChange);
+    const unsubscribe = languageEventService.subscribe(handleLanguageChange);
+    return unsubscribe;
   }, []);
 
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
-    window.dispatchEvent(new CustomEvent(LANGUAGE_CHANGE_EVENT, { detail: newLanguage }));
+    languageEventService.emit(newLanguage);
   };
 
   return { language, changeLanguage };
-}; 
+};

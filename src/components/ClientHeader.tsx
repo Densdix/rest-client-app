@@ -45,7 +45,10 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
           </Link>
         </div>
         <div className="text-gray-400 cursor-pointer hover:text-gray-500 transition-colors">
-          <button onClick={handleLanguageChange} className="px-2 py-1 border border-gray-300 rounded">
+          <button
+            onClick={handleLanguageChange}
+            className="px-2 py-1 border border-gray-300 rounded min-w-[48px] text-center"
+          >
             {language === 'en' ? 'RU' : 'EN'}
           </button>
         </div>
@@ -54,19 +57,19 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
             <div className="flex items-center space-x-4 mr-30">
               <Link
                 href="/history"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[80px] text-center`}
               >
                 {t('common.history')}
               </Link>
               <Link
                 href="/restclient"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[100px] text-center`}
               >
                 {t('common.restClient')}
               </Link>
               <Link
                 href="/variables"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[90px] text-center`}
               >
                 {t('common.variables')}
               </Link>
@@ -75,7 +78,7 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
               <span className="text-gray-400">{user.email}</span>
               <form action="/api/signout" method="post">
                 <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4 transition-colors"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4 transition-colors min-w-[80px]"
                   type="submit"
                 >
                   {t('common.logout')}
@@ -84,14 +87,20 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
             </div>
           </div>
         ) : (
-          <>
-            <Link href="/signin" className="text-gray-400 hover:text-gray-500 transition-colors">
+          <div className="flex space-x-6">
+            <Link
+              href="/signin"
+              className="text-gray-400 hover:text-gray-500 transition-colors min-w-[60px] text-center"
+            >
               {t('common.login')}
             </Link>
-            <Link href="/signup" className="text-gray-400 hover:text-gray-500 transition-colors">
+            <Link
+              href="/signup"
+              className="text-gray-400 hover:text-gray-500 transition-colors min-w-[60px] text-center"
+            >
               {t('common.signup')}
             </Link>
-          </>
+          </div>
         )}
       </div>
     </header>
