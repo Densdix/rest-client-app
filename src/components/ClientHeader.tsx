@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useState, useEffect, FC } from 'react';
 import { User } from '@supabase/supabase-js';
+import Image from 'next/image';
 
 export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,11 +25,14 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
     >
       <div className="px-8 w-full max-w-[1280px] mx-auto flex justify-between align-middle items-center">
         <div>
-          <Link
-            href="/"
-            className="w-20 h-20 block bg-gray-400 hover:bg-gray-500 rounded-full transition-all duration-300"
-          >
-            {/* <img src="/logo.png" alt="app logo" className="w-22 h-22" /> */}
+          <Link href="/" className="block bg-gray-400 hover:bg-gray-500 rounded-full transition-all duration-300">
+            <Image
+              src="/logo.jpg"
+              alt="app logo"
+              width={512}
+              height={512}
+              className="w-22 h-22 rounded-full object-cover"
+            />
           </Link>
         </div>
         <div className="text-gray-400 cursor-pointer hover:text-gray-500 transition-colors">

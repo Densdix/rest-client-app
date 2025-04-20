@@ -18,6 +18,7 @@ export interface ContentRequest {
   body: string;
   headers?: { name: string; value: string; isActive: boolean }[];
   paramNames: { name: string; value: string; isActive: boolean }[];
+  environment?: Record<string, string>;
 }
 
 export const Content: React.FC = () => {
@@ -180,7 +181,7 @@ export const Content: React.FC = () => {
               handleAppendHeader={handleAppendHeader}
             />
 
-            <CodeBlock getValues={getValues} />
+            <CodeBlock getValues={getValues} variables={variables} />
 
             <RequestBodyBlock register={register} variables={variables} isMounted={isMounted} />
           </div>

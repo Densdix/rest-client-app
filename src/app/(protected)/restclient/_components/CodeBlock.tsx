@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { UseFormGetValues } from 'react-hook-form';
 import { ContentRequest } from './Content';
 import { generateRequestCode } from '@/utils/generateRequestCode';
+import { Variable } from '@/utils/localstorage/variablesLocal';
 
 interface Props {
   getValues: UseFormGetValues<ContentRequest>;
+  variables?: Variable[];
 }
 
-export const CodeBlock: React.FC<Props> = ({ getValues }) => {
+export const CodeBlock: React.FC<Props> = ({ getValues, variables = [] }) => {
   const codeTabs = [
     { key: 'curl', label: 'cURL' },
     { key: 'jsFetch', label: 'JavaScript (Fetch)' },
@@ -22,7 +24,21 @@ export const CodeBlock: React.FC<Props> = ({ getValues }) => {
   type CodeTabKey = (typeof codeTabs)[number]['key'];
   const [activeTab, setActiveTab] = useState<CodeTabKey>('curl');
 
-  const generatedCode = generateRequestCode(getValues());
+  const environment = variables.reduce(
+    (acc, variable) => {
+      acc[variable.name] = variable.value;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
+  const values = getValues();
+  const valuesWithEnvironment = {
+    ...values,
+    environment,
+  };
+
+  const generatedCode = generateRequestCode(valuesWithEnvironment);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">

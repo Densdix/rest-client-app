@@ -1,22 +1,37 @@
 import { ContentRequest } from '@/app/(protected)/restclient/_components/Content';
 
+function replaceVariables(str: string, variables: Record<string, string> = {}): string {
+  if (!str || !str.includes('{{')) return str;
+
+  return str.replace(/\{\{([^}]+)\}\}/g, (match, variableName) => {
+    return variables[variableName] || '';
+  });
+}
+
 export function generateRequestCode(data: ContentRequest) {
   if (!data.url || !data.method) {
     return 'Not enough data to generate code.';
   }
 
-  // Prepare headers
+  const variables: Record<string, string> = data.environment || {};
+
+  const processedUrl = replaceVariables(data.url, variables);
+
   const headersObj = (data.headers || [])
     .filter((h) => h.isActive && h.name)
-    .reduce((acc, h) => ({ ...acc, [h.name]: h.value }), {} as Record<string, string>);
+    .reduce(
+      (acc, h) => {
+        const processedValue = replaceVariables(h.value, variables);
+        return { ...acc, [h.name]: processedValue };
+      },
+      {} as Record<string, string>
+    );
   const headersArr = Object.entries(headersObj);
 
-  // Prepare body
   const hasBody = !!data.body && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(data.method.toUpperCase());
-  const bodyStr = hasBody ? data.body : undefined;
+  const bodyStr = hasBody ? replaceVariables(data.body, variables) : undefined;
 
-  // Curl
-  let curl = `curl -X ${data.method.toUpperCase()} "${data.url}"`;
+  let curl = `curl -X ${data.method.toUpperCase()} "${processedUrl}"`;
   headersArr.forEach(([k, v]) => {
     curl += ` \\\n  -H "${k}: ${v}"`;
   });
@@ -24,7 +39,6 @@ export function generateRequestCode(data: ContentRequest) {
     curl += ` \\\n  -d '${bodyStr.replace(/'/g, "\\'")}'`;
   }
 
-  // JS Fetch
   let jsFetch = `fetch("${data.url}", {\n  method: "${data.method.toUpperCase()}",`;
   if (headersArr.length) {
     jsFetch += `\n  headers: ${JSON.stringify(headersObj, null, 2)},`;
@@ -34,7 +48,6 @@ export function generateRequestCode(data: ContentRequest) {
   }
   jsFetch += `\n})\n  .then(res => res.json())\n  .then(console.log);`;
 
-  // JS XHR
   let jsXHR = `var xhr = new XMLHttpRequest();\nxhr.open("${data.method.toUpperCase()}", "${data.url}", true);\n`;
   headersArr.forEach(([k, v]) => {
     jsXHR += `xhr.setRequestHeader("${k}", "${v}");\n`;
@@ -46,14 +59,12 @@ export function generateRequestCode(data: ContentRequest) {
     jsXHR += `xhr.send();`;
   }
 
-  // NodeJS
   let node = `const https = require('https');\n\nconst options = {\n  method: '${data.method.toUpperCase()}',\n  headers: ${JSON.stringify(headersObj, null, 2)}\n};\n\nconst req = https.request("${data.url}", options, res => {\n  let data = '';\n  res.on('data', chunk => data += chunk);\n  res.on('end', () => console.log(data));\n});\n`;
   if (bodyStr) {
     node += `req.write(\`${bodyStr}\`);\n`;
   }
   node += `req.end();`;
 
-  // Python
   let py = `import requests\nurl = "${data.url}"\nheaders = ${JSON.stringify(headersObj, null, 2)}\n`;
   if (bodyStr) {
     py += `data = '''${bodyStr}'''\nresponse = requests.request("${data.method.toUpperCase()}", url, headers=headers, data=data)\n`;
@@ -62,7 +73,6 @@ export function generateRequestCode(data: ContentRequest) {
   }
   py += `print(response.text)`;
 
-  // Java
   let java = `import java.io.*;\nimport java.net.*;\n\nURL url = new URL("${data.url}");\nHttpURLConnection con = (HttpURLConnection) url.openConnection();\ncon.setRequestMethod("${data.method.toUpperCase()}");\n`;
   headersArr.forEach(([k, v]) => {
     java += `con.setRequestProperty("${k}", "${v}");\n`;
@@ -72,7 +82,6 @@ export function generateRequestCode(data: ContentRequest) {
   }
   java += `BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));\nStringBuilder response = new StringBuilder();\nString responseLine;\nwhile ((responseLine = br.readLine()) != null) {\n  response.append(responseLine.trim());\n}\nSystem.out.println(response.toString());`;
 
-  // C#
   let csharp = `using System.Net.Http;\nusing System.Text;\n\nvar client = new HttpClient();\nvar request = new HttpRequestMessage(HttpMethod.${data.method.charAt(0).toUpperCase() + data.method.slice(1).toLowerCase()}, "${data.url}");\n`;
   headersArr.forEach(([k, v]) => {
     csharp += `request.Headers.Add("${k}", "${v}");\n`;
@@ -82,7 +91,6 @@ export function generateRequestCode(data: ContentRequest) {
   }
   csharp += `var response = await client.SendAsync(request);\nvar responseBody = await response.Content.ReadAsStringAsync();\nConsole.WriteLine(responseBody);`;
 
-  // Go
   let go = `package main\nimport (\n  "fmt"\n  "io/ioutil"\n  "net/http"\n  "strings"\n)\n\nfunc main() {\n  client := &http.Client{}\n  req, _ := http.NewRequest("${data.method.toUpperCase()}", "${data.url}", ${bodyStr ? `strings.NewReader(\`${bodyStr}\`)` : 'nil'} )\n`;
   headersArr.forEach(([k, v]) => {
     go += `  req.Header.Add("${k}", "${v}")\n`;
