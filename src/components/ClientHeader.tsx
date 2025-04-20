@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -21,9 +21,10 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLanguageChange = () => {
-    changeLanguage(language === 'en' ? 'ru' : 'en');
-  };
+  const handleLanguageChange = useCallback(() => {
+    const newLanguage = language === 'en' ? 'ru' : 'en';
+    changeLanguage(newLanguage);
+  }, [language, changeLanguage]);
 
   return (
     <header
@@ -44,7 +45,7 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
           </Link>
         </div>
         <div className="text-gray-400 cursor-pointer hover:text-gray-500 transition-colors">
-          <button onClick={handleLanguageChange}>
+          <button onClick={handleLanguageChange} className="px-2 py-1 border border-gray-300 rounded">
             {language === 'en' ? 'RU' : 'EN'}
           </button>
         </div>
