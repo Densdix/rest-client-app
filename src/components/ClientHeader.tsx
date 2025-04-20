@@ -1,12 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import Image from 'next/image';
+import { useLanguage } from '@/hooks/useLanguage';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { language, changeLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +20,11 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLanguageChange = useCallback(() => {
+    const newLanguage = language === 'en' ? 'ru' : 'en';
+    changeLanguage(newLanguage);
+  }, [language, changeLanguage]);
 
   return (
     <header
@@ -36,51 +45,62 @@ export const ClientHeader: FC<{ user: User | null }> = ({ user }) => {
           </Link>
         </div>
         <div className="text-gray-400 cursor-pointer hover:text-gray-500 transition-colors">
-          <button>RU / EN</button>
+          <button
+            onClick={handleLanguageChange}
+            className="px-2 py-1 border border-gray-300 rounded min-w-[48px] text-center"
+          >
+            {language === 'en' ? 'RU' : 'EN'}
+          </button>
         </div>
         {user ? (
           <div className="flex items-center justify-between space-x-4">
             <div className="flex items-center space-x-4 mr-30">
               <Link
                 href="/history"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[80px] text-center`}
               >
-                История
+                {t('common.history')}
               </Link>
               <Link
                 href="/restclient"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[100px] text-center`}
               >
-                Rest client
+                {t('common.restClient')}
               </Link>
               <Link
                 href="/variables"
-                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors`}
+                className={`cursor-pointer ${isScrolled ? 'text-white' : 'text-gray-400'} hover:text-gray-500 transition-colors min-w-[90px] text-center`}
               >
-                Переменные
+                {t('common.variables')}
               </Link>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-400">{user.email}</span>
               <form action="/api/signout" method="post">
                 <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4 transition-colors"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4 transition-colors min-w-[80px]"
                   type="submit"
                 >
-                  Выйти
+                  {t('common.logout')}
                 </button>
               </form>
             </div>
           </div>
         ) : (
-          <>
-            <Link href="/signin" className="text-gray-400 hover:text-gray-500 transition-colors">
-              Войти
+          <div className="flex space-x-6">
+            <Link
+              href="/signin"
+              className="text-gray-400 hover:text-gray-500 transition-colors min-w-[60px] text-center"
+            >
+              {t('common.login')}
             </Link>
-            <Link href="/signup" className="text-gray-400 hover:text-gray-500 transition-colors">
-              Регистрация
+            <Link
+              href="/signup"
+              className="text-gray-400 hover:text-gray-500 transition-colors min-w-[60px] text-center"
+            >
+              {t('common.signup')}
             </Link>
-          </>
+          </div>
         )}
       </div>
     </header>
