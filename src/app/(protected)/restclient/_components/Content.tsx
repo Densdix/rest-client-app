@@ -4,8 +4,13 @@ import { recordRequest } from '@/utils/localstorage/recordRequest';
 import React, { useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { sendRequest } from './action';
-import { generateRequestCode } from '@/utils/generateRequestCode';
 import { Variable, getVariablesFromStorage, replaceVariables } from '@/utils/localstorage/variablesLocal';
+import { ResponseBlock } from './ResponseBlock';
+import { RequestBodyBlock } from './RequestBodyBlock';
+import { QueryParamsBlock } from './QueryParamsBlock';
+import { HeadersBlock } from './HeadersBlock';
+import { CodeBlock } from './CodeBlock';
+import { UrlBlock } from './UrlBlock';
 
 export interface ContentRequest {
   url: string;
@@ -28,24 +33,15 @@ export const Content: React.FC = () => {
     setIsMounted(true);
     const loadedVariables = getVariablesFromStorage();
     setVariables(loadedVariables);
-    console.log('Variables loaded in Content component:', loadedVariables);
   }, []);
 
-  const { register, handleSubmit, control, setValue, getValues, watch } = useForm<ContentRequest>({
+  const { register, handleSubmit, control, setValue, getValues } = useForm<ContentRequest>({
     defaultValues: {
       url: '',
       paramNames: [{ name: '', value: '', isActive: true }],
       headers: [{ name: '', value: '', isActive: true }],
     },
   });
-
-  const currentUrl = watch('url');
-  useEffect(() => {
-    if (currentUrl && variables.length > 0 && isMounted) {
-      console.log('Current URL:', currentUrl);
-      console.log('URL with replaced variables:', replaceVariables(currentUrl));
-    }
-  }, [currentUrl, variables, isMounted]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -74,7 +70,7 @@ export const Content: React.FC = () => {
     const currentUrl = url.includes('?') ? url.split('?')[0] : url;
 
     const params = getValues('paramNames')
-      .filter((field) => field.isActive)
+      .filter((field) => field.isActive && field.name)
       .map((field) => {
         return `${field.name}=${field.value}`;
       })
@@ -98,7 +94,6 @@ export const Content: React.FC = () => {
   function handleAppendHeader(index: number, e: React.ChangeEvent<HTMLInputElement>) {
     if (headerFields.length - 1 === index) {
       appendHeader({ name: '', value: '', isActive: true });
-      console.log('lastInputHeader', lastInputHeader.current);
       lastInputHeader.current = e.target;
     }
   }
@@ -123,14 +118,7 @@ export const Content: React.FC = () => {
 
   const handleSubmitRequest = async (data: ContentRequest) => {
     try {
-      console.log('Form data before processing:', data);
-      console.log('Available variables:', getVariablesFromStorage());
-
       const processedData = replaceVariablesInContentRequest(data);
-
-      console.log('Processed request data with variables:', processedData);
-      console.log('Original URL:', data.url);
-      console.log('Processed URL:', processedData.url);
 
       const res = await sendRequest(processedData);
 
@@ -139,236 +127,48 @@ export const Content: React.FC = () => {
       setError(res.error || null);
 
       recordRequest(processedData.url);
-    } catch (err) {
-      console.error('Error processing request with variables:', err);
+    } catch {
       setError('Ошибка при обработке запроса с переменными');
     }
   };
 
-  const getPreviewUrl = () => {
-    const url = getValues('url');
-    if (!url) return url;
-
-    return replaceVariables(url);
-  };
-
-  const generatedCode = generateRequestCode(getValues());
-
-  const codeTabs = [
-    { key: 'curl', label: 'cURL' },
-    { key: 'jsFetch', label: 'JavaScript (Fetch)' },
-    { key: 'jsXHR', label: 'JavaScript (XHR)' },
-    { key: 'node', label: 'NodeJS' },
-    { key: 'py', label: 'Python' },
-    { key: 'java', label: 'Java' },
-    { key: 'csharp', label: 'C#' },
-    { key: 'go', label: 'Go' },
-  ] as const;
-
-  type CodeTabKey = (typeof codeTabs)[number]['key'];
-  const [activeTab, setActiveTab] = React.useState<CodeTabKey>('curl');
-
   return (
-    <div>
-      <div className="p-4">
-        <form onSubmit={handleSubmit(handleSubmitRequest)}>
-          <div className="flex flex-1 p-4">
-            <div className="w-1/2 pr-2">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
-                <div className="flex items-center mb-4">
-                  <select
-                    id="method"
-                    {...register('method')}
-                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                  >
-                    <option>GET</option>
-                    <option>POST</option>
-                    <option>PUT</option>
-                    <option>PATCH</option>
-                    <option>DELETE</option>
-                  </select>
+    <div className="p-4">
+      <form onSubmit={handleSubmit(handleSubmitRequest)}>
+        <div className="flex flex-1 p-4">
+          <div className="w-1/2 pr-2">
+            <UrlBlock register={register} getValues={getValues} isMounted={isMounted} variables={variables} />
 
-                  <input
-                    id="url"
-                    {...register('url')}
-                    type="text"
-                    placeholder="Enter request URL"
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                  />
+            <QueryParamsBlock
+              register={register}
+              control={control}
+              setValue={setValue}
+              getValues={getValues}
+              fields={fields}
+              append={append}
+              remove={remove}
+              handleAppend={handleAppend}
+              createUrl={createUrl}
+            />
 
-                  <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" type="submit">
-                    Send
-                  </button>
-                </div>
+            <HeadersBlock
+              register={register}
+              control={control}
+              setValue={setValue}
+              fields={headerFields}
+              append={appendHeader}
+              remove={removeHeader}
+              handleAppendHeader={handleAppendHeader}
+            />
 
-                {/* Предпросмотр URL с переменными - только после монтирования */}
-                {isMounted && variables.length > 0 && getValues('url') && (
-                  <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    <div>URL с переменными:</div>
-                    <div className="font-mono bg-gray-100 dark:bg-gray-900 p-1 rounded overflow-x-auto">
-                      {getPreviewUrl()}
-                    </div>
-                  </div>
-                )}
+            <CodeBlock getValues={getValues} />
 
-                <div className="border-b dark:border-gray-700 mb-4">
-                  <div className="flex space-x-4 mb-2">
-                    <div className="px-3 py-1 border-b-2 border-blue-500 font-medium">Query Params</div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex flex-col items-center p-4 border ">
-                    {fields.map((field, index) => (
-                      <div className="flex" key={field.id}>
-                        <input
-                          type="checkbox"
-                          className="mr-2"
-                          {...register(`paramNames.${index}.isActive`)}
-                          onChange={(e) => {
-                            setValue(`paramNames.${index}.isActive`, e.target.checked);
-                            createUrl();
-                          }}
-                        />
-                        <input
-                          className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                          {...register(`paramNames.${index}.name`)}
-                          onChange={(e) => {
-                            setValue(`paramNames.${index}.name`, e.target.value);
-                            handleAppend(index, e);
-                          }}
-                        />
-                        <input
-                          className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                          {...register(`paramNames.${index}.value`)}
-                          onChange={(e) => {
-                            setValue(`paramNames.${index}.value`, e.target.value);
-                            handleAppend(index, e);
-                          }}
-                        />
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (fields.length > 1) remove(index);
-                            createUrl();
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="border-b dark:border-gray-700 mb-4 mt-4">
-                  <div className="flex space-x-4 mb-2">
-                    <div className="px-3 py-1 border-b-2 border-blue-500 font-medium">Headers</div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex flex-col items-center p-4 border ">
-                    {headerFields.map((field, index) => (
-                      <div className="flex" key={field.id}>
-                        <input type="checkbox" className="mr-2" {...register(`headers.${index}.isActive`)} />
-                        <input
-                          className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                          {...register(`headers.${index}.name`)}
-                          placeholder="Header name"
-                          onChange={(e) => {
-                            setValue(`headers.${index}.name`, e.target.value);
-                            handleAppendHeader(index, e);
-                          }}
-                        />
-                        <input
-                          className="border border-gray-300 dark:border-gray-600 rounded-md mr-2 bg-white dark:bg-gray-700"
-                          {...register(`headers.${index}.value`)}
-                          placeholder="Header value"
-                          onChange={(e) => {
-                            setValue(`headers.${index}.value`, e.target.value);
-                            handleAppendHeader(index, e);
-                          }}
-                        />
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (headerFields.length > 1) removeHeader(index);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {/* Generated request code section with tabs */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                <h3 className="font-medium mb-2">Generated request code</h3>
-                {typeof generatedCode === 'string' ? (
-                  <div className="text-gray-500">{generatedCode}</div>
-                ) : (
-                  <div>
-                    <div className="flex mb-2 border-b dark:border-gray-700">
-                      {codeTabs.map((tab) => (
-                        <button
-                          key={tab.key}
-                          type="button"
-                          className={`px-3 py-1 mr-2 font-semibold border-b-2 ${
-                            activeTab === tab.key
-                              ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                              : 'border-transparent text-gray-600 dark:text-gray-300'
-                          } focus:outline-none`}
-                          onClick={() => setActiveTab(tab.key)}
-                        >
-                          {tab.label}
-                        </button>
-                      ))}
-                    </div>
-                    <pre className="text-xs bg-gray-100 dark:bg-gray-900 rounded p-2 overflow-x-auto">
-                      {generatedCode[activeTab]}
-                    </pre>
-                  </div>
-                )}
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                <h3 className="font-medium mb-2">Request Body</h3>
-                <textarea
-                  id="body"
-                  {...register('body')}
-                  className="w-full h-60 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700"
-                  placeholder="Enter request body"
-                ></textarea>
-
-                {/* Подсказка о поддержке переменных - только после монтирования */}
-                {isMounted && variables.length > 0 && (
-                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    <p>Вы можете использовать переменные в формате {'{{{имя_переменной}}}'}</p>
-                    <p>Доступные переменные: {variables.map((v) => `{{${v.name}}}`).join(', ')}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="w-1/2 pl-2">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 h-full">
-                <div className="border-b dark:border-gray-700 mb-4">
-                  <div className="flex space-x-4 mb-2 justify-between">
-                    <div className="px-3 font-medium">Response</div>
-                    <div className="text-green-500 font-medium">Status: {responseStatus}</div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700 p-4 h-96 overflow-y-auto">
-                  {responseData && !error ? (
-                    <pre className="text-sm">{JSON.stringify(responseData, null, 2)}</pre>
-                  ) : (
-                    <div className="text-red-500">{error}</div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <RequestBodyBlock register={register} variables={variables} isMounted={isMounted} />
           </div>
-        </form>
-      </div>
+
+          <ResponseBlock responseData={responseData} error={error} responseStatus={responseStatus} />
+        </div>
+      </form>
     </div>
   );
 };

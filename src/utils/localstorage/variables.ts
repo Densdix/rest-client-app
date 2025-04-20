@@ -23,37 +23,20 @@ export const loadVariables = (): Variable[] => {
 };
 
 export const replaceVariables = (text: string, variables: Variable[]): string => {
-  console.log('replaceVariables функция вызвана с:');
-  console.log('- text:', text);
-  console.log('- variables:', variables);
-
   if (!text || !variables.length) {
-    console.log('Замена не выполнена: пустой текст или нет переменных');
     return text;
   }
 
   let result = text;
   const variablePattern = /\{\{([^}]+)\}\}/g;
 
-  const matches = [...text.matchAll(variablePattern)];
-  console.log(
-    'Найдены шаблоны переменных:',
-    matches.map((m) => m[0])
-  );
-
   result = result.replace(variablePattern, (match, variableName) => {
     const trimmedName = variableName.trim();
     const variable = variables.find((v) => v.name === trimmedName);
 
-    console.log(
-      `Замена ${match} (${trimmedName}):`,
-      variable ? `найдена переменная со значением ${variable.value}` : 'переменная не найдена, оставляем без изменений'
-    );
-
     return variable ? variable.value : match;
   });
 
-  console.log('Результат замены:', result);
   return result;
 };
 

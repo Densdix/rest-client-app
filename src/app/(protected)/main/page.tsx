@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
-// import { Content } from './_components/Content';
 import { redirect } from 'next/navigation';
 
 export default async function MainPage() {
@@ -10,11 +9,7 @@ export default async function MainPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log('user111: ', user);
-
   if (!user) {
-    console.log('no user');
-    console.log({ user });
     redirect('/signin');
   }
 

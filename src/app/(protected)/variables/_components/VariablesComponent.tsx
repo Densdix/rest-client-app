@@ -23,7 +23,6 @@ export const VariablesComponent: React.FC = () => {
   useEffect(() => {
     const storedVariables = getVariablesFromStorage();
     setVariables(storedVariables);
-    console.log('Variables loaded from localStorage:', storedVariables);
   }, []);
 
   const {
@@ -68,10 +67,8 @@ export const VariablesComponent: React.FC = () => {
         setVariables((prev) => [...prev, newVariable]);
       }
 
-      console.log('Variables after update:', getVariablesFromStorage());
       resetForm();
-    } catch (err) {
-      console.error('Error saving variable:', err);
+    } catch {
       setError('Ошибка при сохранении переменной');
     }
   };
@@ -80,8 +77,7 @@ export const VariablesComponent: React.FC = () => {
     try {
       deleteVariable(id);
       setVariables((prev) => prev.filter((v) => v.id !== id));
-    } catch (err) {
-      console.error('Error deleting variable:', err);
+    } catch {
       setError('Ошибка при удалении переменной');
     }
   };

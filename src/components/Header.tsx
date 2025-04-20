@@ -19,16 +19,29 @@ export const Header = async () => {
         </div>
         <div className="text-gray-400">Lang</div>
         {user ? (
-          <div className="flex items-center space-x-4">
-            <span className="text-gray-400">{user.email}</span>
-            <form action="/api/signout" method="post">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4"
-                type="submit"
-              >
-                Выйти
-              </button>
-            </form>
+          <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center space-x-4 mr-30">
+              <Link href="/history" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+                История
+              </Link>
+              <Link href="/restclient" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+                Rest client
+              </Link>
+              <Link href="/variables" className=" cursor-pointer  text-gray-400 hover:text-gray-500">
+                Переменные
+              </Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-400">{user.email}</span>
+              <form action="/api/signout" method="post">
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer ml-4"
+                  type="submit"
+                >
+                  Выйти
+                </button>
+              </form>
+            </div>
           </div>
         ) : (
           <>
