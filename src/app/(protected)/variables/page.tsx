@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { VariablesClientWrapper } from './ClientComponent';
 
 export default async function VariablesPage() {
   const supabase = await createClient();
@@ -13,8 +14,8 @@ export default async function VariablesPage() {
   }
 
   return (
-    <div className="w-full h-full p-8 flex flex-col justify-center align-middle items-center">
-      <div className="flex items-center space-x-4 my-10">Variables</div>
+    <div className="w-full">
+      <VariablesClientWrapper />
     </div>
   );
 }

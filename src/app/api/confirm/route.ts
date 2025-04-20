@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
     const next = '/main';
 
     console.log('Parameters:', { token_hash, type });
-    // Create redirect link without the secret token
     const redirectTo = request.nextUrl.clone();
     redirectTo.pathname = next;
     redirectTo.searchParams.delete('token_hash');
@@ -35,7 +34,6 @@ export async function GET(request: NextRequest) {
       console.log('Verification result:', { error });
     }
 
-    // return the user to an error page with some instructions
     redirectTo.pathname = '/error';
     return NextResponse.redirect(redirectTo);
   } catch (error) {
