@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 export const Footer = () => {
@@ -10,7 +11,7 @@ export const Footer = () => {
             className="inline-flex items-center  text-gray-400 hover:text-gray-500"
             target="_blank"
           >
-            <img src="/github.png" alt="github logo" className="w-8 h-8 mr-2" />
+            <Image width={32} height={32} src="/github.png" alt="github logo" className="mr-2" />
             densdix
           </a>
           <a
@@ -18,7 +19,7 @@ export const Footer = () => {
             className="inline-flex items-center text-gray-400 hover:text-gray-500"
             target="_blank"
           >
-            <img src="/github.png" alt="github logo" className="w-8 h-8  mr-2" />
+            <Image width={32} height={32} src="/github.png" alt="github logo" className="mr-2" />
             evakerrigan
           </a>
           <a
@@ -26,14 +27,20 @@ export const Footer = () => {
             className="inline-flex items-center text-gray-400 hover:text-gray-500"
             target="_blank"
           >
-            <img src="/github.png" alt="github logo" className="w-8 h-8  mr-2" />
+            <Image width={32} height={32} src="/github.png" alt="github logo" className="mr-2" />
             teymurdev
           </a>
         </div>
         <div className="text-gray-400">2025</div>
         <div className="relative">
-          <a href="https://rs.school/js/" className="flex items-center space-x-2" target="_blank">
-            <img src="/rsschool-js-logo.webp" alt="RSS School JS logo" className="w-24 h-8 object-contain" />
+          <a href="https://rs.school" className="flex items-center space-x-2" target="_blank">
+            <Image
+              width={96}
+              height={32}
+              src="/rsschool-js-logo.webp"
+              alt="RSS School JS logo"
+              className="object-contain"
+            />
           </a>
         </div>
       </div>
