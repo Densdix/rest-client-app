@@ -10,6 +10,7 @@
     "lint": "eslint . --ext ts,tsx",
     "lint:watch": "next lint",
     "lint:fix": "next lint --fix",
+    "ts-check": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
