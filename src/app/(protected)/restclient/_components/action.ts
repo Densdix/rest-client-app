@@ -10,12 +10,20 @@ export async function sendRequest(data: ContentRequest) {
   }
 
   try {
-    const response = await fetch(data.url, {
+    const url = data.url;
+    const body = data.body || null;
+
+    const headers = data.headers
+      ? Object.fromEntries(data.headers.filter((h) => h.isActive && h.name).map((h) => [h.name, h.value]))
+      : {};
+
+    console.log('Server received request with URL:', url);
+    console.log('Request headers:', headers);
+
+    const response = await fetch(url, {
       method: data.method || 'GET',
-      headers: data.headers
-        ? Object.fromEntries(data.headers.filter((h) => h.isActive && h.name).map((h) => [h.name, h.value]))
-        : {},
-      body: data.body ? data.body : null,
+      headers,
+      body,
     });
 
     const responseData = await response.json();
@@ -25,6 +33,7 @@ export async function sendRequest(data: ContentRequest) {
       data: responseData,
     };
   } catch (error) {
+    console.error('Error sending request:', error);
     return {
       error: error instanceof Error ? error.message : 'Failed to send request',
     };

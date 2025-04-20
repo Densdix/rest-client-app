@@ -5,13 +5,11 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    // Получаем данные текущего пользователя
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
 
-    // Если произошла ошибка или пользователь не найден
     if (error || !user) {
       return NextResponse.json(
         {
@@ -22,7 +20,6 @@ export async function GET() {
       );
     }
 
-    // Возвращаем данные пользователя (без чувствительной информации)
     return NextResponse.json({
       user: {
         id: user.id,

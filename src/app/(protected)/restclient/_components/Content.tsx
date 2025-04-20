@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { sendRequest } from './action';
 import { generateRequestCode } from '@/utils/generateRequestCode';
+import { Variable, getVariablesFromStorage, replaceVariables } from '@/utils/localstorage/variablesLocal';
 
 export interface ContentRequest {
   url: string;
@@ -20,14 +21,31 @@ export const Content: React.FC = () => {
   const [responseData, setResponseData] = React.useState(null);
   const [responseStatus, setResponseStatus] = React.useState<number | undefined>(undefined);
   const [error, setError] = React.useState<string | null>(null);
+  const [variables, setVariables] = React.useState<Variable[]>([]);
+  const [isMounted, setIsMounted] = React.useState(false);
 
-  const { register, handleSubmit, control, setValue, getValues } = useForm<ContentRequest>({
+  useEffect(() => {
+    setIsMounted(true);
+    const loadedVariables = getVariablesFromStorage();
+    setVariables(loadedVariables);
+    console.log('Variables loaded in Content component:', loadedVariables);
+  }, []);
+
+  const { register, handleSubmit, control, setValue, getValues, watch } = useForm<ContentRequest>({
     defaultValues: {
       url: '',
       paramNames: [{ name: '', value: '', isActive: true }],
       headers: [{ name: '', value: '', isActive: true }],
     },
   });
+
+  const currentUrl = watch('url');
+  useEffect(() => {
+    if (currentUrl && variables.length > 0 && isMounted) {
+      console.log('Current URL:', currentUrl);
+      console.log('URL with replaced variables:', replaceVariables(currentUrl));
+    }
+  }, [currentUrl, variables, isMounted]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -85,21 +103,57 @@ export const Content: React.FC = () => {
     }
   }
 
+  const replaceVariablesInContentRequest = (data: ContentRequest): ContentRequest => {
+    return {
+      ...data,
+      url: replaceVariables(data.url),
+      body: data.body ? replaceVariables(data.body) : '',
+      headers: data.headers?.map((header) => ({
+        ...header,
+        name: replaceVariables(header.name),
+        value: replaceVariables(header.value),
+      })),
+      paramNames: data.paramNames?.map((param) => ({
+        ...param,
+        name: replaceVariables(param.name),
+        value: replaceVariables(param.value),
+      })),
+    };
+  };
+
   const handleSubmitRequest = async (data: ContentRequest) => {
-    console.log(data);
+    try {
+      console.log('Form data before processing:', data);
+      console.log('Available variables:', getVariablesFromStorage());
 
-    const res = await sendRequest(data);
+      const processedData = replaceVariablesInContentRequest(data);
 
-    setResponseData(res.data);
-    setResponseStatus(res.status);
-    setError(res.error || null);
+      console.log('Processed request data with variables:', processedData);
+      console.log('Original URL:', data.url);
+      console.log('Processed URL:', processedData.url);
 
-    recordRequest(data.url);
+      const res = await sendRequest(processedData);
+
+      setResponseData(res.data);
+      setResponseStatus(res.status);
+      setError(res.error || null);
+
+      recordRequest(processedData.url);
+    } catch (err) {
+      console.error('Error processing request with variables:', err);
+      setError('Ошибка при обработке запроса с переменными');
+    }
+  };
+
+  const getPreviewUrl = () => {
+    const url = getValues('url');
+    if (!url) return url;
+
+    return replaceVariables(url);
   };
 
   const generatedCode = generateRequestCode(getValues());
 
-  // Tabs for generated code
   const codeTabs = [
     { key: 'curl', label: 'cURL' },
     { key: 'jsFetch', label: 'JavaScript (Fetch)' },
@@ -109,8 +163,10 @@ export const Content: React.FC = () => {
     { key: 'java', label: 'Java' },
     { key: 'csharp', label: 'C#' },
     { key: 'go', label: 'Go' },
-  ];
-  const [activeTab, setActiveTab] = React.useState('curl');
+  ] as const;
+
+  type CodeTabKey = (typeof codeTabs)[number]['key'];
+  const [activeTab, setActiveTab] = React.useState<CodeTabKey>('curl');
 
   return (
     <div>
@@ -144,6 +200,16 @@ export const Content: React.FC = () => {
                     Send
                   </button>
                 </div>
+
+                {/* Предпросмотр URL с переменными - только после монтирования */}
+                {isMounted && variables.length > 0 && getValues('url') && (
+                  <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div>URL с переменными:</div>
+                    <div className="font-mono bg-gray-100 dark:bg-gray-900 p-1 rounded overflow-x-auto">
+                      {getPreviewUrl()}
+                    </div>
+                  </div>
+                )}
 
                 <div className="border-b dark:border-gray-700 mb-4">
                   <div className="flex space-x-4 mb-2">
@@ -258,7 +324,7 @@ export const Content: React.FC = () => {
                       ))}
                     </div>
                     <pre className="text-xs bg-gray-100 dark:bg-gray-900 rounded p-2 overflow-x-auto">
-                      {/* {generatedCode[activeTab]} */}
+                      {generatedCode[activeTab]}
                     </pre>
                   </div>
                 )}
@@ -271,6 +337,14 @@ export const Content: React.FC = () => {
                   className="w-full h-60 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700"
                   placeholder="Enter request body"
                 ></textarea>
+
+                {/* Подсказка о поддержке переменных - только после монтирования */}
+                {isMounted && variables.length > 0 && (
+                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p>Вы можете использовать переменные в формате {'{{{имя_переменной}}}'}</p>
+                    <p>Доступные переменные: {variables.map((v) => `{{${v.name}}}`).join(', ')}</p>
+                  </div>
+                )}
               </div>
             </div>
 
