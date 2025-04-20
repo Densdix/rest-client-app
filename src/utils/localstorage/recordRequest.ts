@@ -1,11 +1,18 @@
-export const recordRequest = (url: string) => {
+import { ContentRequest } from '@/app/(protected)/restclient/_components/Content';
+
+export const recordRequest = (data: ContentRequest) => {
   const storedHistory = localStorage.getItem('requestHistory');
 
-  let newHistory: string[];
+  const requestWithTimestamp = {
+    ...data,
+    timestamp: Date.now(),
+  };
+
+  let newHistory: (ContentRequest & { timestamp: number })[];
   if (storedHistory === null) {
-    newHistory = [url];
+    newHistory = [requestWithTimestamp];
   } else {
-    newHistory = [url, ...JSON.parse(storedHistory)];
+    newHistory = [requestWithTimestamp, ...JSON.parse(storedHistory)];
   }
 
   localStorage.setItem('requestHistory', JSON.stringify(newHistory));
