@@ -35,7 +35,7 @@ export const Content: React.FC = () => {
     setVariables(loadedVariables);
   }, []);
 
-  const { register, handleSubmit, control, setValue, getValues } = useForm<ContentRequest>({
+  const { register, handleSubmit, control, setValue, getValues, reset } = useForm<ContentRequest>({
     defaultValues: {
       url: '',
       paramNames: [{ name: '', value: '', isActive: true }],
@@ -64,6 +64,19 @@ export const Content: React.FC = () => {
   useEffect(() => {
     lastInputHeader.current?.focus();
   }, [headerFields]);
+
+  useEffect(() => {
+    const savedRequest = localStorage.getItem('currentRequest');
+    if (savedRequest) {
+      try {
+        const parsedRequest = JSON.parse(savedRequest);
+        reset(parsedRequest);
+        localStorage.removeItem('currentRequest');
+      } catch (error) {
+        console.error('Failed to parse saved request', error);
+      }
+    }
+  }, [reset]);
 
   function createUrl() {
     const url = getValues('url');

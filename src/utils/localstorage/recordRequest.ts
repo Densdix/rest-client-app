@@ -3,11 +3,16 @@ import { ContentRequest } from '@/app/(protected)/restclient/_components/Content
 export const recordRequest = (data: ContentRequest) => {
   const storedHistory = localStorage.getItem('requestHistory');
 
-  let newHistory: ContentRequest[];
+  const requestWithTimestamp = {
+    ...data,
+    timestamp: Date.now(),
+  };
+
+  let newHistory: (ContentRequest & { timestamp: number })[];
   if (storedHistory === null) {
-    newHistory = [data];
+    newHistory = [requestWithTimestamp];
   } else {
-    newHistory = [data, ...JSON.parse(storedHistory)];
+    newHistory = [requestWithTimestamp, ...JSON.parse(storedHistory)];
   }
 
   localStorage.setItem('requestHistory', JSON.stringify(newHistory));
