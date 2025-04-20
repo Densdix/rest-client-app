@@ -1,0 +1,36 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "history": "History",
+    "restClient": "REST Client",
+    "variables": "Variables"
+  },
+  "header": {
+    "title": "REST Client",
+    "language": "Language"
+  },
+  "footer": {
+    "copyright": "© 2025",
+    "github": "GitHub",
+    "rsschool": "RSS School JS"
+  },
+  "home": {
+    "welcome": "Welcome!",
+    "login": "Login",
+    "signup": "Sign Up"
+  }
+} 
