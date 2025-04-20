@@ -1,0 +1,36 @@
+{
+  "common": {
+    "welcome": "Добро пожаловать",
+    "login": "Войти",
+    "logout": "Выйти",
+    "signup": "Регистрация",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "submit": "Отправить",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "search": "Поиск",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "history": "История",
+    "restClient": "REST Клиент",
+    "variables": "Переменные"
+  },
+  "header": {
+    "title": "REST Клиент",
+    "language": "Язык"
+  },
+  "footer": {
+    "copyright": "© 2025",
+    "github": "GitHub",
+    "rsschool": "RSS School JS"
+  },
+  "home": {
+    "welcome": "Добро пожаловать!",
+    "login": "Войти",
+    "signup": "Регистрация"
+  }
+} 
