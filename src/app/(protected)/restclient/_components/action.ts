@@ -23,6 +23,8 @@ export async function sendRequest(data: ContentRequest) {
       body,
     });
 
+    console.log('Response:', response);
+
     const responseData = await response.json();
     return {
       status: response.status,

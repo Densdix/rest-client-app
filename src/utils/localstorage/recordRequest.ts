@@ -1,11 +1,13 @@
-export const recordRequest = (url: string) => {
+import { ContentRequest } from '@/app/(protected)/restclient/_components/Content';
+
+export const recordRequest = (data: ContentRequest) => {
   const storedHistory = localStorage.getItem('requestHistory');
 
-  let newHistory: string[];
+  let newHistory: ContentRequest[];
   if (storedHistory === null) {
-    newHistory = [url];
+    newHistory = [data];
   } else {
-    newHistory = [url, ...JSON.parse(storedHistory)];
+    newHistory = [data, ...JSON.parse(storedHistory)];
   }
 
   localStorage.setItem('requestHistory', JSON.stringify(newHistory));

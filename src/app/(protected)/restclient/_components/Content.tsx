@@ -103,16 +103,20 @@ export const Content: React.FC = () => {
       ...data,
       url: replaceVariables(data.url),
       body: data.body ? replaceVariables(data.body) : '',
-      headers: data.headers?.map((header) => ({
-        ...header,
-        name: replaceVariables(header.name),
-        value: replaceVariables(header.value),
-      })),
-      paramNames: data.paramNames?.map((param) => ({
-        ...param,
-        name: replaceVariables(param.name),
-        value: replaceVariables(param.value),
-      })),
+      headers: data.headers
+        ?.filter((field) => field.value && field.name)
+        .map((header) => ({
+          ...header,
+          name: replaceVariables(header.name),
+          value: replaceVariables(header.value),
+        })),
+      paramNames: data.paramNames
+        ?.filter((field) => field.value && field.name)
+        .map((param) => ({
+          ...param,
+          name: replaceVariables(param.name),
+          value: replaceVariables(param.value),
+        })),
     };
   };
 
@@ -120,13 +124,15 @@ export const Content: React.FC = () => {
     try {
       const processedData = replaceVariablesInContentRequest(data);
 
+      console.log({ processedData });
+
       const res = await sendRequest(processedData);
 
       setResponseData(res.data);
       setResponseStatus(res.status);
       setError(res.error || null);
 
-      recordRequest(processedData.url);
+      recordRequest(processedData);
     } catch {
       setError('Ошибка при обработке запроса с переменными');
     }
