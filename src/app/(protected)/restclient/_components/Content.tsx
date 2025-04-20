@@ -154,9 +154,7 @@ export const Content: React.FC = () => {
       <form onSubmit={handleSubmit(handleSubmitRequest)}>
         <div className="flex flex-1 p-4">
           <div className="w-1/2 pr-2">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
-              <UrlBlock register={register} getValues={getValues} isMounted={isMounted} variables={variables} />
-            </div>
+            <UrlBlock register={register} getValues={getValues} isMounted={isMounted} variables={variables} />
 
             <QueryParamsBlock
               register={register}
