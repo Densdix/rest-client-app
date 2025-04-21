@@ -28,7 +28,6 @@ export default function SignUpContent() {
     },
   });
 
-  // Получаем значение пароля для валидации подтверждения пароля
   const password = watch('password');
 
   const onSubmit: SubmitHandler<FormSignUp> = async (data) => {

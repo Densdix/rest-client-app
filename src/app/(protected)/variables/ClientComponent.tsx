@@ -10,3 +10,5 @@ const VariablesComponent = dynamic(
 export function VariablesClientWrapper() {
   return <VariablesComponent />;
 }
+
+export default VariablesClientWrapper;
