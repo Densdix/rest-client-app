@@ -13,7 +13,6 @@ describe('HeadersBlock', () => {
   const mockHandleAppendHeader = vi.fn();
   const mockControl = {} as Control<ContentRequest>;
 
-  // Подготовка мок-данных для полей заголовков
   const mockFields = [
     { id: '1', name: 'Content-Type', value: 'application/json', isActive: true },
     { id: '2', name: 'Authorization', value: 'Bearer token123', isActive: false },

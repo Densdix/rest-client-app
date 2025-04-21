@@ -4,12 +4,10 @@ import '@testing-library/jest-dom';
 import SignUpContent from '../app/(auth)/signup/_components/Content';
 import * as actions from '../app/(auth)/signup/actions';
 
-// Мокаем модуль actions
 vi.mock('../app/(auth)/signup/actions', () => ({
   signup: vi.fn(),
 }));
 
-// Мокаем next/link
 vi.mock('next/link', () => ({
   default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
 }));
@@ -69,7 +67,6 @@ describe('SignUpContent', () => {
   });
 
   it('вызывает функцию signup при отправке валидной формы', async () => {
-    // Мокаем успешный ответ
     vi.mocked(actions.signup).mockResolvedValue({ error: '' });
 
     render(<SignUpContent />);
@@ -95,7 +92,6 @@ describe('SignUpContent', () => {
   });
 
   it('показывает ошибку сервера при неудачной регистрации', async () => {
-    // Мокаем ответ с ошибкой
     vi.mocked(actions.signup).mockResolvedValue({ error: 'Пользователь с таким email уже существует' });
 
     render(<SignUpContent />);

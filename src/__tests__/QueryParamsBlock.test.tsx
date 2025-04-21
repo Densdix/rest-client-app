@@ -15,7 +15,6 @@ describe('QueryParamsBlock', () => {
   const mockControl = {} as Control<ContentRequest>;
   const mockGetValues = vi.fn();
 
-  // Подготовка мок-данных для полей запроса
   const mockFields = [
     { id: '1', name: 'page', value: '1', isActive: true },
     { id: '2', name: 'limit', value: '10', isActive: false },
@@ -105,7 +104,6 @@ describe('QueryParamsBlock', () => {
       />
     );
 
-    // Находим поля ввода (третье поле - это имя первого параметра)
     const inputs = screen.getAllByRole('textbox');
     fireEvent.change(inputs[0], { target: { value: 'newParam' } });
 

@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ResponseBlock } from '@/app/(protected)/restclient/_components/ResponseBlock';
 
-// Мок для getStatusCodeColor
 vi.mock('@/utils/getStatusCodeColor', () => ({
   getStatusCodeColor: vi.fn((statusCode) => {
     if (statusCode >= 200 && statusCode < 300) return 'text-green-500';

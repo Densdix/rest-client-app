@@ -6,7 +6,6 @@ import { RequestBodyBlock } from '@/app/(protected)/restclient/_components/Reque
 describe('RequestBodyBlock', () => {
   const mockRegister = vi.fn();
 
-  // Подготовка мок-данных для переменных
   const mockVariables = [
     { id: '1', name: 'API_KEY', value: '12345' },
     { id: '2', name: 'USER_ID', value: 'user_123' },

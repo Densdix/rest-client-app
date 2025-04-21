@@ -47,7 +47,6 @@ export const UrlBlock: React.FC<Props> = ({ register, getValues, isMounted, vari
           </button>
         </div>
 
-        {/* Предпросмотр URL с переменными - только после монтирования */}
         {isMounted && variables.length > 0 && getValues('url') && (
           <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
             <div>URL с переменными:</div>

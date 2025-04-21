@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CodeBlock } from '@/app/(protected)/restclient/_components/CodeBlock';
 
-// Мок для generateRequestCode
 vi.mock('@/utils/generateRequestCode', () => ({
   generateRequestCode: vi.fn((data) => {
     if (!data.url) {
@@ -84,19 +83,14 @@ describe('CodeBlock', () => {
 
     render(<CodeBlock getValues={mockGetValues} />);
 
-    // Проверяем, что по умолчанию отображается код для cURL
     expect(screen.getByText('curl -X GET "https://api.example.com"')).toBeInTheDocument();
 
-    // Кликаем на вкладку JavaScript (Fetch)
     fireEvent.click(screen.getByText('JavaScript (Fetch)'));
 
-    // Проверяем, что отображается код для JavaScript (Fetch)
     expect(screen.getByText('fetch("https://api.example.com")')).toBeInTheDocument();
 
-    // Кликаем на вкладку Python
     fireEvent.click(screen.getByText('Python'));
 
-    // Проверяем, что отображается код для Python
     expect(screen.getByText(/import requests/)).toBeInTheDocument();
     expect(screen.getByText(/requests.request\("GET", "https:\/\/api.example.com"\)/)).toBeInTheDocument();
   });

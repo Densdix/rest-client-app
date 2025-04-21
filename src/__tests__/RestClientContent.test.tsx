@@ -4,12 +4,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Content, ContentRequest } from '@/app/(protected)/restclient/_components/Content';
 import { UseFormRegister } from 'react-hook-form';
 
-// Мок для recordRequest
 vi.mock('@/utils/localstorage/recordRequest', () => ({
   recordRequest: vi.fn(),
 }));
 
-// Мок для action
 vi.mock('@/app/(protected)/restclient/_components/action', () => ({
   sendRequest: vi.fn().mockImplementation(async (data) => {
     if (!data.url) {
@@ -28,7 +26,6 @@ vi.mock('@/app/(protected)/restclient/_components/action', () => ({
   }),
 }));
 
-// Мок для вспомогательных компонентов
 vi.mock('@/app/(protected)/restclient/_components/UrlBlock', () => ({
   UrlBlock: ({ register }: { register: UseFormRegister<ContentRequest> }) => (
     <div data-testid="url-block">
@@ -80,7 +77,6 @@ vi.mock('@/app/(protected)/restclient/_components/CodeBlock', () => ({
   CodeBlock: () => <div data-testid="code-block">Code Block</div>,
 }));
 
-// Мок для variablesLocal
 vi.mock('@/utils/localstorage/variablesLocal', () => ({
   getVariablesFromStorage: vi.fn().mockReturnValue([{ id: '1', name: 'API_URL', value: 'https://api.example.com' }]),
   replaceVariables: vi.fn((text) => text),
@@ -89,7 +85,6 @@ vi.mock('@/utils/localstorage/variablesLocal', () => ({
 describe('Content Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Очищаем localStorage
     if (typeof window !== 'undefined') {
       window.localStorage.clear();
     }
@@ -107,7 +102,6 @@ describe('Content Component', () => {
   });
 
   it('загружает запрос из локального хранилища при наличии', async () => {
-    // Имитируем сохраненный запрос в localStorage
     const savedRequest: ContentRequest = {
       url: 'https://api.example.com/test',
       method: 'POST',
@@ -120,7 +114,6 @@ describe('Content Component', () => {
 
     render(<Content />);
 
-    // Проверяем, что данные из localStorage загрузились
     await waitFor(() => {
       const urlInput = screen.getByTestId('url-input');
       expect(urlInput).toHaveValue('https://api.example.com/test');

@@ -2,7 +2,6 @@ import { vi, describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Home from '@/app/page';
 
-// Мокаем модули и функции
 vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(() => ({
     auth: {

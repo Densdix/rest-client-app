@@ -5,17 +5,14 @@ import ContentHistory from '@/app/(protected)/history/_components/Content';
 import { useRouter } from 'next/navigation';
 import { Mock } from 'vitest';
 
-// Мок для next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-// Мок для variablesLocal
 vi.mock('@/utils/localstorage/variablesLocal', () => ({
   replaceVariables: vi.fn((text) => text),
 }));
 
-// Типизация для цветов методов
 type HttpMethodColors = {
   GET: string;
   POST: string;
@@ -24,7 +21,6 @@ type HttpMethodColors = {
   DELETE: string;
 };
 
-// Мок для getMethodColor
 vi.mock('@/utils/getMethodColor', () => ({
   getMethodColor: vi.fn((method: string) => {
     const colors: HttpMethodColors = {
@@ -45,14 +41,12 @@ describe('ContentHistory', () => {
     vi.clearAllMocks();
     (useRouter as Mock).mockReturnValue({ push: mockPush });
 
-    // Очищаем localStorage
     if (typeof window !== 'undefined') {
       localStorage.clear();
     }
   });
 
   it('отображает сообщение, если история пуста', () => {
-    // Убеждаемся, что localStorage пуст
     localStorage.removeItem('requestHistory');
 
     render(<ContentHistory />);
@@ -63,18 +57,17 @@ describe('ContentHistory', () => {
   });
 
   it('отображает сохраненные запросы из истории', () => {
-    // Имитируем историю запросов в localStorage
     const mockHistory = [
       {
         url: 'https://api.example.com/users',
         method: 'GET',
-        timestamp: Date.now() - 60000, // 1 минуту назад
+        timestamp: Date.now() - 60000,
       },
       {
         url: 'https://api.example.com/posts',
         method: 'POST',
         body: '{"title":"Test"}',
-        timestamp: Date.now() - 3600000, // 1 час назад
+        timestamp: Date.now() - 3600000,
       },
     ];
 
@@ -144,18 +137,16 @@ describe('ContentHistory', () => {
 
     render(<ContentHistory />);
 
-    // Кликаем на запись в истории
     fireEvent.click(screen.getByText('https://api.example.com/users'));
 
-    // Проверяем, что запрос был сохранен в localStorage и выполнен переход
     expect(localStorage.getItem('currentRequest')).toBeTruthy();
     expect(JSON.parse(localStorage.getItem('currentRequest') as string)).toEqual(mockHistory[0]);
     expect(mockPush).toHaveBeenCalledWith('/restclient');
   });
 
   it('сортирует историю запросов по времени (сначала новые)', () => {
-    const older = Date.now() - 3600000; // 1 час назад
-    const newer = Date.now() - 60000; // 1 минута назад
+    const older = Date.now() - 3600000;
+    const newer = Date.now() - 60000;
 
     const mockHistory = [
       {
@@ -174,10 +165,8 @@ describe('ContentHistory', () => {
 
     render(<ContentHistory />);
 
-    // Получаем все URL элементы
     const urls = screen.getAllByText(/https:\/\/api.example.com\//);
 
-    // Проверяем, что более новый запрос отображается первым
     expect(urls[0]).toHaveTextContent('https://api.example.com/newer');
     expect(urls[1]).toHaveTextContent('https://api.example.com/older');
   });
@@ -198,7 +187,6 @@ describe('ContentHistory', () => {
 
     render(<ContentHistory />);
 
-    // Проверяем, что тело запроса обрезано и добавлено многоточие
     const displayedBody = screen.getByText(/{"data":"x+/);
     expect(displayedBody.textContent?.length).toBeLessThan(longBody.length);
     expect(displayedBody.textContent?.endsWith('...')).toBe(true);

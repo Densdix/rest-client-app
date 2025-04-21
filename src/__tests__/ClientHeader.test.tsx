@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { ClientHeader } from '../components/ClientHeader';
 import { User } from '@supabase/supabase-js';
 
-// Мок для хука useLanguage
 vi.mock('@/hooks/useLanguage', () => ({
   useLanguage: () => ({
     language: 'en',
@@ -12,7 +11,6 @@ vi.mock('@/hooks/useLanguage', () => ({
   }),
 }));
 
-// Мок для хука useTranslation
 vi.mock('@/hooks/useTranslation', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -29,7 +27,6 @@ vi.mock('@/hooks/useTranslation', () => ({
   }),
 }));
 
-// Мок для Next.js компонентов
 vi.mock('next/link', () => {
   return {
     __esModule: true,
@@ -57,18 +54,15 @@ vi.mock('next/image', () => {
 });
 
 describe('ClientHeader', () => {
-  // Создаем частичную реализацию интерфейса User
   const mockUser: User = {
     id: '123',
     email: 'test@example.com',
-    // Добавляем обязательные поля
     app_metadata: {},
     user_metadata: {},
     aud: 'authenticated',
     created_at: '2023-01-01T00:00:00Z',
   } as User;
 
-  // Мок для window.scrollY
   beforeEach(() => {
     vi.stubGlobal('addEventListener', vi.fn());
     vi.stubGlobal('removeEventListener', vi.fn());
@@ -99,7 +93,6 @@ describe('ClientHeader', () => {
   it('отображает навигацию и email для аутентифицированного пользователя', () => {
     render(<ClientHeader user={mockUser} />);
 
-    // Проверяем навигационные ссылки
     const historyLink = screen.getByText('History');
     const restClientLink = screen.getByText('REST Client');
     const variablesLink = screen.getByText('Variables');
@@ -113,10 +106,8 @@ describe('ClientHeader', () => {
     expect(variablesLink).toBeInTheDocument();
     expect(variablesLink).toHaveAttribute('href', '/variables');
 
-    // Проверяем отображение email пользователя
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
 
-    // Проверяем кнопку выхода
     expect(screen.getByText('Logout')).toBeInTheDocument();
   });
 });

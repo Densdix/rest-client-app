@@ -5,21 +5,18 @@ import { Header } from '../components/Header';
 import * as supabaseServer from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
 
-// Мок для ClientHeader компонента
 vi.mock('../components/ClientHeader', () => ({
   ClientHeader: ({ user }: { user: User | null }) => (
     <div data-testid="client-header">{user ? `User: ${user.email}` : 'No user'}</div>
   ),
 }));
 
-// Мок для функции createClient из supabase/server
 vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
 }));
 
 describe('Header', () => {
   it('передает пользователя в ClientHeader компонент когда пользователь авторизован', async () => {
-    // Настройка мока для supabase клиента
     const mockUser = { email: 'test@example.com' };
     const mockSupabaseClient = {
       auth: {
@@ -31,16 +28,13 @@ describe('Header', () => {
 
     (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-    // Рендерим компонент
     const { findByTestId } = render(await Header());
 
-    // Проверяем что ClientHeader получил пользователя
     const clientHeader = await findByTestId('client-header');
     expect(clientHeader.textContent).toBe(`User: ${mockUser.email}`);
   });
 
   it('передает null в ClientHeader компонент когда пользователь не авторизован', async () => {
-    // Настройка мока для supabase клиента
     const mockSupabaseClient = {
       auth: {
         getUser: vi.fn().mockResolvedValue({
@@ -51,10 +45,8 @@ describe('Header', () => {
 
     (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-    // Рендерим компонент
     const { findByTestId } = render(await Header());
 
-    // Проверяем что ClientHeader получил null вместо пользователя
     const clientHeader = await findByTestId('client-header');
     expect(clientHeader.textContent).toBe('No user');
   });

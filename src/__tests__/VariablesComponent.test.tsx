@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { VariablesComponent } from '@/app/(protected)/variables/_components/VariablesComponent';
 
-// Мок для функций работы с переменными
 vi.mock('@/utils/localstorage/variablesLocal', () => ({
   getVariablesFromStorage: vi.fn(),
   addVariable: vi.fn((name, value) => ({
@@ -64,7 +63,6 @@ describe('VariablesComponent', () => {
   it('добавляет новую переменную при отправке формы', async () => {
     render(<VariablesComponent />);
 
-    // Заполняем и отправляем форму
     fireEvent.change(screen.getByLabelText('Имя переменной'), {
       target: { value: 'NEW_VAR' },
     });
@@ -73,12 +71,10 @@ describe('VariablesComponent', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Добавить' }));
 
-    // Проверяем, что функция добавления была вызвана с правильными аргументами
     await waitFor(() => {
       expect(addVariable).toHaveBeenCalledWith('NEW_VAR', 'new-value');
     });
 
-    // Проверяем, что интерфейс обновился
     expect(screen.getByText('NEW_VAR')).toBeInTheDocument();
     expect(screen.getByText('new-value')).toBeInTheDocument();
   });
@@ -86,15 +82,12 @@ describe('VariablesComponent', () => {
   it('редактирует существующую переменную', async () => {
     render(<VariablesComponent />);
 
-    // Нажимаем на кнопку редактирования
     const editButtons = screen.getAllByText('Редактировать');
     fireEvent.click(editButtons[0]);
 
-    // Проверяем, что форма перешла в режим редактирования
     expect(screen.getByRole('button', { name: 'Сохранить' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Отмена' })).toBeInTheDocument();
 
-    // Изменяем значение переменной
     const nameInput = screen.getByLabelText('Имя переменной');
     const valueInput = screen.getByLabelText('Значение');
 
@@ -106,7 +99,6 @@ describe('VariablesComponent', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Сохранить' }));
 
-    // Проверяем, что функция обновления была вызвана с правильными аргументами
     await waitFor(() => {
       expect(updateVariable).toHaveBeenCalledWith('1', 'API_URL', 'https://new-api.example.com');
     });
@@ -115,34 +107,27 @@ describe('VariablesComponent', () => {
   it('удаляет переменную', async () => {
     render(<VariablesComponent />);
 
-    // Нажимаем на кнопку удаления
     const deleteButtons = screen.getAllByText('Удалить');
     fireEvent.click(deleteButtons[0]);
 
-    // Проверяем, что функция удаления была вызвана с правильным идентификатором
     await waitFor(() => {
       expect(deleteVariable).toHaveBeenCalledWith('1');
     });
 
-    // Проверяем, что переменная больше не отображается
     expect(screen.queryByText('API_URL')).not.toBeInTheDocument();
   });
 
   it('отменяет редактирование переменной', () => {
     render(<VariablesComponent />);
 
-    // Нажимаем на кнопку редактирования
     const editButtons = screen.getAllByText('Редактировать');
     fireEvent.click(editButtons[0]);
 
-    // Проверяем, что форма перешла в режим редактирования
     expect(screen.getByRole('button', { name: 'Сохранить' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Отмена' })).toBeInTheDocument();
 
-    // Отменяем редактирование
     fireEvent.click(screen.getByRole('button', { name: 'Отмена' }));
 
-    // Проверяем, что форма вернулась в режим добавления
     expect(screen.getByRole('button', { name: 'Добавить' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Сохранить' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Отмена' })).not.toBeInTheDocument();
@@ -151,7 +136,6 @@ describe('VariablesComponent', () => {
   it('показывает ошибку, если имя переменной пустое', async () => {
     render(<VariablesComponent />);
 
-    // Отправляем форму с пустым именем переменной
     fireEvent.change(screen.getByLabelText('Имя переменной'), {
       target: { value: '' },
     });
@@ -160,7 +144,6 @@ describe('VariablesComponent', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Добавить' }));
 
-    // Проверяем, что отображается сообщение об ошибке
     await waitFor(() => {
       expect(screen.getByText('Имя переменной не может быть пустым')).toBeInTheDocument();
     });
@@ -169,7 +152,6 @@ describe('VariablesComponent', () => {
   it('показывает ошибку, если переменная с таким именем уже существует', async () => {
     render(<VariablesComponent />);
 
-    // Пытаемся добавить переменную с именем, которое уже существует
     fireEvent.change(screen.getByLabelText('Имя переменной'), {
       target: { value: 'API_URL' },
     });
@@ -178,7 +160,6 @@ describe('VariablesComponent', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Добавить' }));
 
-    // Проверяем, что отображается сообщение об ошибке
     await waitFor(() => {
       expect(screen.getByText('Переменная с именем API_URL уже существует')).toBeInTheDocument();
     });

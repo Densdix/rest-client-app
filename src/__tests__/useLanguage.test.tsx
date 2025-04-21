@@ -3,7 +3,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { defaultLanguage } from '@/i18n/config';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-// Мок для локального хранилища
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
@@ -17,7 +16,6 @@ const localStorageMock = (() => {
   };
 })();
 
-// Переопределение глобального localStorage
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
   writable: true,
@@ -61,20 +59,16 @@ describe('useLanguage', () => {
   });
 
   it('синхронизирует язык между несколькими экземплярами хука', () => {
-    // Рендерим два хука для симуляции использования в разных компонентах
     const { result: result1 } = renderHook(() => useLanguage());
     const { result: result2 } = renderHook(() => useLanguage());
 
-    // Убеждаемся, что начальный язык одинаков
     expect(result1.current.language).toBe(defaultLanguage);
     expect(result2.current.language).toBe(defaultLanguage);
 
-    // Меняем язык в первом хуке
     act(() => {
       result1.current.changeLanguage('ru');
     });
 
-    // Проверяем, что язык изменился в обоих хуках
     expect(result1.current.language).toBe('ru');
     expect(result2.current.language).toBe('ru');
   });

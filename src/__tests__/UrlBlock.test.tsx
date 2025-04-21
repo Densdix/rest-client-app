@@ -3,7 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { UrlBlock } from '@/app/(protected)/restclient/_components/UrlBlock';
 
-// Мок для variablesLocal
 vi.mock('@/utils/localstorage/variablesLocal', () => ({
   replaceVariables: vi.fn((url) => url.replace(/\{\{([^}]+)\}\}/g, 'replaced_value')),
 }));
@@ -23,7 +22,7 @@ describe('UrlBlock', () => {
 
     render(<UrlBlock register={mockRegister} getValues={mockGetValues} isMounted={true} variables={mockVariables} />);
 
-    expect(screen.getByRole('combobox')).toBeInTheDocument(); // select для HTTP метода
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter request URL')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Send/i })).toBeInTheDocument();
   });

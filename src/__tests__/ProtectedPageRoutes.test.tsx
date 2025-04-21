@@ -7,17 +7,14 @@ import VariablesPage from '../app/(protected)/variables/page';
 import * as supabaseServer from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
-// Мок для createClient и Supabase
 vi.mock('@/utils/supabase/server', () => ({
   createClient: vi.fn(),
 }));
 
-// Мок для next/navigation
 vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
 }));
 
-// Моки для компонентов контента
 vi.mock('../app/(protected)/restclient/_components/Content', () => ({
   Content: () => <div data-testid="rest-client-content">REST Client Content</div>,
 }));
@@ -38,7 +35,6 @@ describe('Защищенные страницы', () => {
 
   describe('RestClientPage', () => {
     it('перенаправляет на страницу входа, если пользователь не аутентифицирован', async () => {
-      // Устанавливаем мок для неавторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -49,15 +45,12 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       await RestClientPage();
 
-      // Проверяем, что был вызван редирект на страницу входа
       expect(redirect).toHaveBeenCalledWith('/signin');
     });
 
     it('отображает компонент Content, если пользователь аутентифицирован', async () => {
-      // Устанавливаем мок для авторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -68,11 +61,9 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       const result = await RestClientPage();
       const { container } = render(result);
 
-      // Проверяем, что компонент Content отрендерен
       expect(container.innerHTML).toContain('REST Client Content');
       expect(redirect).not.toHaveBeenCalled();
     });
@@ -80,7 +71,6 @@ describe('Защищенные страницы', () => {
 
   describe('HistoryPage', () => {
     it('перенаправляет на страницу входа, если пользователь не аутентифицирован', async () => {
-      // Устанавливаем мок для неавторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -91,15 +81,12 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       await HistoryPage();
 
-      // Проверяем, что был вызван редирект на страницу входа
       expect(redirect).toHaveBeenCalledWith('/signin');
     });
 
     it('отображает компонент HistoryClientWrapper, если пользователь аутентифицирован', async () => {
-      // Устанавливаем мок для авторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -110,11 +97,9 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       const result = await HistoryPage();
       const { container } = render(result);
 
-      // Проверяем, что компонент HistoryClientWrapper отрендерен
       expect(container.innerHTML).toContain('History Content');
       expect(redirect).not.toHaveBeenCalled();
     });
@@ -122,7 +107,6 @@ describe('Защищенные страницы', () => {
 
   describe('VariablesPage', () => {
     it('перенаправляет на страницу входа, если пользователь не аутентифицирован', async () => {
-      // Устанавливаем мок для неавторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -133,15 +117,12 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       await VariablesPage();
 
-      // Проверяем, что был вызван редирект на страницу входа
       expect(redirect).toHaveBeenCalledWith('/signin');
     });
 
     it('отображает компонент VariablesClientWrapper, если пользователь аутентифицирован', async () => {
-      // Устанавливаем мок для авторизованного пользователя
       const mockSupabaseClient = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -152,11 +133,9 @@ describe('Защищенные страницы', () => {
 
       (supabaseServer.createClient as Mock).mockResolvedValue(mockSupabaseClient);
 
-      // Рендерим компонент
       const result = await VariablesPage();
       const { container } = render(result);
 
-      // Проверяем, что компонент VariablesClientWrapper отрендерен
       expect(container.innerHTML).toContain('Variables Content');
       expect(redirect).not.toHaveBeenCalled();
     });

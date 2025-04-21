@@ -3,7 +3,6 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import * as useLanguageModule from '@/hooks/useLanguage';
 
-// Мок для translations
 vi.mock('@/i18n/config', () => ({
   translations: {
     en: {
@@ -39,7 +38,6 @@ describe('useTranslation', () => {
   });
 
   it('возвращает перевод на английском по умолчанию', () => {
-    // Мокируем useLanguage, чтобы он возвращал английский язык
     vi.spyOn(useLanguageModule, 'useLanguage').mockReturnValue({
       language: 'en',
       changeLanguage: vi.fn(),
@@ -52,7 +50,6 @@ describe('useTranslation', () => {
   });
 
   it('возвращает перевод на русском', () => {
-    // Мокируем useLanguage, чтобы он возвращал русский язык
     vi.spyOn(useLanguageModule, 'useLanguage').mockReturnValue({
       language: 'ru',
       changeLanguage: vi.fn(),

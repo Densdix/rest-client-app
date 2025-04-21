@@ -3,9 +3,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/utils/supabase/server';
 
-// Creating a handler to a GET request to route /api/confirm
-//TODO: https://brianhhough.com/howto/how-to-fix-this-nextjs-error-no-http-methods-exported-in-export-a-named-export-for-each-http-method-instead
-//fix with try catch for No HTTP methods exported for development
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

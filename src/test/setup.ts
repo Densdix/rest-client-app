@@ -2,10 +2,8 @@ import '@testing-library/jest-dom';
 import { vi, beforeEach } from 'vitest';
 import React from 'react';
 
-// Глобальное определение React для тестов
 global.React = React;
 
-// Мок для объекта localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
@@ -22,13 +20,11 @@ const localStorageMock = (() => {
   };
 })();
 
-// Мок для объекта window
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
   writable: true,
 });
 
-// Очищаем моки перед каждым тестом
 beforeEach(() => {
   vi.resetAllMocks();
 });
